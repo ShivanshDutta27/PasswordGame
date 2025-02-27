@@ -1,0 +1,31 @@
+1.Digits add up to x
+2.Pi sequence
+3Atomic symbols add up to x
+4Ascii character for the largest atomic symbol they set
+5one reserved keyword from the c language
+6Two characters on the keyboard whose Manhattan distance is x
+7Hex code for some color
+8one of the display modes in css
+9must include looping condition for Fibonacci
+10Sum of 1,2,3,4 ....  (-1/12 or 0.whatever)
+11value of g in physics( keep it at 10 to mock or if they type 9.8 then hint them by saying oh lets make calculations easier )
+12one out of 10 coding problems given and their fastest tc or algorithm needed 
+13sorting algorithm name
+14make them calc time complexity of something
+15include one of newtons laws
+16line no that has an error inside a code
+17. add one data structure
+18. add your favorite language name ( make the errors and other lang related problems based on that)
+19. include one of the frameworks for webd 
+20. ask to copy and paste some code 
+
+
+console.log("Yeah, copy me, that's all you're good for!");
+console.log("Originality called—it’s waiting for you somewhere far away.");
+console.log("Keep copying code; it's easier than thinking for yourself, right?");
+console.log("If there were a medal for copy-paste, you'd be an Olympic champion.");
+console.log("I see you're embracing the art of duplication—congrats on your lack of creativity!");
+
+
+
+
