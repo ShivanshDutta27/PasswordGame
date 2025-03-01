@@ -41,7 +41,7 @@ const rule5 = new Rule(
 const possibleDigitTargets = [25, 30, 35];
 const digitTarget = randomTargetFrom(possibleDigitTargets);
 const rule6 = new Rule(
-  `Your password's digits must add up to ${digitTarget}.`,
+  `Your password's digits must sum up to ${digitTarget}.`,
   (t) => (t.match(/\d/g) || []).reduce((acc, d) => acc + Number(d), 0) === digitTarget
 );
 
@@ -90,16 +90,16 @@ const rule10 = new Rule(
   "The ASCII character for 5! must appear  in your password.",
   (t) => /x/.test(t)
 );
-
 const rule11 = new Rule(
   "Your password must include the value of g in physics",
   (t) => /10/.test(t) && !/9\.8/.test(t)
 );
 
 const rule12 = new Rule(
-  "Your password must include one reserved C keyword.",
-  (t) => reservedCKeywords.some(keyword => new RegExp(`\\b${keyword}\\b`).test(t))
+  "Your password must include one reserved keyword from the C Language.",
+  (t) => reservedCKeywords.some(keyword => t.toLowerCase().includes(keyword.toLowerCase()))
 );
+
 
 // Using the static pairs for Manhattan distance 5 from validLetterPairs.
 const rule13 = new Rule(
@@ -108,7 +108,7 @@ const rule13 = new Rule(
 );
 
 const rule14 = new Rule(
-  "Your password must contain a hex color code for yellow (it's my favorite, so I had to).",
+  "Your password must contain hex color code for a shade of yellow",
   (t) => {
     const match = t.match(/#([0-9A-Fa-f]{6})/);
     if (!match) return false;
@@ -123,13 +123,8 @@ const rule14 = new Rule(
 
 const rule15 = new Rule(
   "Your password must include one CSS display mode.",
-  (t) => /(block|inline|flex|grid|hidden)/i.test(t)
+  (t) => /(block|inline|flex|grid|hidden|none)/i.test(t)
 );
-
-const rule16 = new Rule(
-  "Your password must include a loop or comment that hints at iterating over Fibonacci numbers.",
-  (t) => /fib/i.test(t)
-); // Probably gonna replace this with an event
 
 
 
@@ -171,12 +166,7 @@ const rule21 = new Rule(
     /v\^2\s*-\s*u\^2\s*=\s*2as/i.test(t)
 );
 
-const chosenErrorSnippet = randomTargetFrom(errorSnippets);
 
-const rule22 = new Rule(
-  `Your password must include the line number that indicates the error in the code snippet below:\n\n${chosenErrorSnippet.snippet}`,
-  (t) => t.includes(chosenErrorSnippet.answer)
-);
 
 
 const rule23 = new Rule(
@@ -186,12 +176,12 @@ const rule23 = new Rule(
 
 const rule24 = new Rule(
   "Your password must include the name of a programming language.",
-  (t) => /(JavaScript|Python|Java|C\+\+|Ruby|Go|Flutter|Kotlin)/i.test(t)
+  (t) => /(JavaScript|Python|Java|C\+\+|Ruby|Go|Flutter|Kotlin|C)/i.test(t)
 );
 
 const rule25 = new Rule(
   "Your password must include the name of a web development framework.",
-  (t) => /(React|Angular|Vue|Next\.js|Svelte)/i.test(t)
+  (t) => /(React|Angular|Vue|Next\.js|Svelte|.net|Node)/i.test(t)
 );
 
 var rules = [
@@ -199,8 +189,8 @@ var rules = [
   rule6, rule7, rule8, rule9,
   new RuleSyntaxError(), rule10,
   rule11, rule12, rule13, rule14, rule15,
-  rule16, rule17, rule18, rule19, rule20,
-  rule21, rule22, rule23, rule24, rule25,
+  rule17, rule18, rule19, rule20,
+  rule21, rule23, rule24, rule25,
    new RuleInfiniteLoop(),
    
   // new RuleVersionUpdate(),
