@@ -1,7 +1,7 @@
 .container{
     width: 576px;
     max-width: calc(100% - 20px);
-    margin: 0 auto;
+    margin: 4px auto;
     padding: 5px;
     min-height: calc(100vh - 50px);
 }
@@ -22,6 +22,7 @@
     justify-content: center;
     margin-top: 20px;
     margin-bottom: 40px;
+    gap: 20px;
 }
 .title_text{
     font-size: 28px;

@@ -1,18 +1,18 @@
 import Rule from "./Rule";
+import RuleInfiniteLoop from "./RuleInfiniteLoop.jsx/RuleInfiniteLoop";
+import RuleSyntaxError from "./SyntaxError/SyntaxError";
+import RuleVersionUpdate from "./VersionUpdate/VersionUpdate";
+import { atomicSymbols, reservedCKeywords, algorithmTemplates, rule17Snippets, validLetterPairs, errorSnippets } from "@/rules/data";
 
-const codes = [];
 
-// Helper function to generate a random integer between min and max (inclusive)
 function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Helper: generate a random target from a specific set
 function randomTargetFrom(set) {
     return set[randomInt(0, set.length - 1)];
 }
 
-// BASIC RULES
 const rule1 = new Rule(
   "Your password must be at least 8 characters long.",
   (t) => t?.length >= 8
@@ -38,146 +38,157 @@ const rule5 = new Rule(
   (t) => /\W/.test(t)
 );
 
-// ADVANCED / NERDY RULES
-
-// 6. Digits add up to x (dynamic target chosen from 25, 30, or 35)
 const possibleDigitTargets = [25, 30, 35];
 const digitTarget = randomTargetFrom(possibleDigitTargets);
 const rule6 = new Rule(
   `Your password's digits must add up to ${digitTarget}.`,
-  (t) => {
-    const sum = (t.match(/\d/g) || []).reduce((acc, d) => acc + Number(d), 0);
-    return sum === digitTarget;
-  }
+  (t) => (t.match(/\d/g) || []).reduce((acc, d) => acc + Number(d), 0) === digitTarget
 );
 
-// 7. Pi sequence (first 5 digits of pi)
 const rule7 = new Rule(
   "Your password must contain the first 5 digits of pi.",
   (t) => /3\.1415/.test(t)
 );
 
-// 8. Sum of 1,2,3,4... (quirky representation: -1/12 or 0)
 const rule8 = new Rule(
   "Your password must represent the sum of the series 1+2+3+4+… in a quirky way.",
   (t) => /(-1\/12|0)/.test(t)
 );
 
-// 9. Atomic symbols add up to x (dummy implementation with a dynamic target)
-const possibleAtomicTargets = [50, 60, 100];
-const atomicTarget = randomTargetFrom(possibleAtomicTargets);
+const atomicTarget = 100;
 const rule9 = new Rule(
   `The atomic symbols in your password must have their atomic numbers sum to ${atomicTarget}.`,
   (t) => {
     let sum = 0;
-    // Dummy implementation: count a couple of symbols for illustration.
-    if (/He/.test(t)) sum += 2;
-    if (/Li/.test(t)) sum += 3;
-    // In a full implementation, you would parse all valid symbols.
+    let i = 0;
+    while (i < t.length) {
+      let matchedSymbol = null;
+      if (i < t.length - 1) {
+        const twoLetterSymbol = t.slice(i, i + 2);
+        if (atomicSymbols[twoLetterSymbol] !== undefined) {
+          matchedSymbol = twoLetterSymbol;
+        }
+      }
+      if (!matchedSymbol) {
+        const oneLetterSymbol = t[i];
+        if (atomicSymbols[oneLetterSymbol] !== undefined) {
+          matchedSymbol = oneLetterSymbol;
+        }
+      }
+      if (matchedSymbol) {
+        sum += atomicSymbols[matchedSymbol];
+        i += matchedSymbol.length;
+      } else {
+        i++;
+      }
+    }
     return sum === atomicTarget;
   }
 );
 
-// 10. ASCII character for the largest atomic symbol used
 const rule10 = new Rule(
-  "The ASCII character for the largest atomic symbol you used must appear elsewhere in your password.",
-  (t) => {
-    // For illustration: if "Li" is used, its first letter 'L' must be present.
-    if (/Li/.test(t)) {
-      return /L/.test(t);
-    }
-    return false;
-  }
+  "The ASCII character for 5! must appear  in your password.",
+  (t) => /x/.test(t)
 );
 
-// 11. Value of g in physics (must be 10, not 9.8)
 const rule11 = new Rule(
-  "Your password must include the value of g in physics (it should be 10, not 9.8).",
+  "Your password must include the value of g in physics",
   (t) => /10/.test(t) && !/9\.8/.test(t)
 );
 
-// 12. One reserved keyword from the C language
 const rule12 = new Rule(
   "Your password must include one reserved C keyword.",
-  (t) => /(\bif\b|\belse\b|\bfor\b|\bwhile\b)/.test(t)
+  (t) => reservedCKeywords.some(keyword => new RegExp(`\\b${keyword}\\b`).test(t))
 );
 
-// 13. Two characters on the keyboard whose Manhattan distance equals a target value
+// Using the static pairs for Manhattan distance 5 from validLetterPairs.
 const rule13 = new Rule(
-  "Your password must include two characters whose Manhattan distance on a QWERTY keyboard equals a target value.",
+  "Your password must include two characters whose Manhattan distance on a QWERTY keyboard equals 5.",
+  (t) => validLetterPairs[5].some(([a, b]) => new RegExp(`${a}.*${b}|${b}.*${a}`, "i").test(t))
+);
+
+const rule14 = new Rule(
+  "Your password must contain a hex color code for yellow (it's my favorite, so I had to).",
   (t) => {
-    // For simplicity, check for a known pair.
-    return /QA/.test(t) || /AQ/.test(t);
+    const match = t.match(/#([0-9A-Fa-f]{6})/);
+    if (!match) return false;
+    const intVal = parseInt(match[1], 16);
+    const r = intVal >> 16;
+    const g = (intVal >> 8) & 0xff;
+    const b = intVal & 0xff;
+    return r >= 200 && g >= 200 && b <= 100;
   }
 );
 
-// 14. Hex code for some color
-const rule14 = new Rule(
-  "Your password must contain a valid hex color code.",
-  (t) => /#[0-9A-Fa-f]{6}/.test(t)
-);
 
-// 15. One of the display modes in CSS
 const rule15 = new Rule(
   "Your password must include one CSS display mode.",
-  (t) => /(block|inline|flex|grid)/i.test(t)
+  (t) => /(block|inline|flex|grid|hidden)/i.test(t)
 );
 
-// 16. Must include a looping condition for Fibonacci (or a comment hinting at Fibonacci)
 const rule16 = new Rule(
   "Your password must include a loop or comment that hints at iterating over Fibonacci numbers.",
   (t) => /fib/i.test(t)
-);
+); // Probably gonna replace this with an event
 
-// 17. Ask to copy and paste some code (humorous prompt)
+
+
+const chosenSnippet = randomTargetFrom(rule17Snippets);
+
+
 const rule17 = new Rule(
-  "Prove you're a true coder: copy and paste the code snippet exactly!",
-  (t) => /sudo make me a sandwich/.test(t)
+  `Prove you're a true coder: copy and paste this code snippet exactly! -> \n${chosenSnippet}`,
+  (t) => t.includes(chosenSnippet)
 );
 
-// 18. Reference one coding problem and its optimal algorithm
+
+
+
+const chosenTemplate = randomTargetFrom(algorithmTemplates);
+
 const rule18 = new Rule(
-  "Your password must reference one coding problem and its optimal algorithm.",
-  (t) => /(DP|BS|Greedy|Recursion)/.test(t)
+  `Your password must include the algorithm name corresponding to the code snippet below:\n\n${chosenTemplate.snippet}`,
+  (t) => chosenTemplate.algorithm.some(name => t.toLowerCase().includes(name))
 );
 
-// 19. Sorting algorithm name
+
 const rule19 = new Rule(
   "Your password must include the name of a sorting algorithm.",
   (t) => /(quick|merge|heap|bubble|insertion)/i.test(t)
 );
 
-// 20. Calculate time complexity (include a Big-O notation)
 const rule20 = new Rule(
   "Your password must contain a Big-O notation representing time complexity.",
   (t) => /O\(.+\)/.test(t)
 );
 
-// 21. Include one of Newton's laws
 const rule21 = new Rule(
-  "Your password must include one of Newton's laws.",
-  (t) => /F\s*=\s*ma/.test(t)
+  "Your password must include Newton's 2nd law or a basic kinematic equation ",
+  (t) =>
+    /F\s*=\s*ma/i.test(t) ||
+    /v\s*=\s*u\s*\+\s*at/i.test(t) ||
+    /s\s*=\s*ut\s*\+\s*1\/2\s*at\^2/i.test(t) ||
+    /v\^2\s*-\s*u\^2\s*=\s*2as/i.test(t)
 );
 
-// 22. Include a code snippet with a line number that has an error
+const chosenErrorSnippet = randomTargetFrom(errorSnippets);
+
 const rule22 = new Rule(
-  "Your password must include a code snippet with a line number that indicates an error.",
-  (t) => /line\s*\d+\s+error/i.test(t)
+  `Your password must include the line number that indicates the error in the code snippet below:\n\n${chosenErrorSnippet.snippet}`,
+  (t) => t.includes(chosenErrorSnippet.answer)
 );
 
-// 23. Add one data structure
+
 const rule23 = new Rule(
   "Your password must include the name of a data structure.",
   (t) => /(stack|queue|tree|graph|array)/i.test(t)
 );
 
-// 24. Add your favorite programming language name
 const rule24 = new Rule(
-  "Your password must include the name of your favorite programming language.",
-  (t) => /(JavaScript|Python|Java|C\+\+|Ruby|Go)/i.test(t)
+  "Your password must include the name of a programming language.",
+  (t) => /(JavaScript|Python|Java|C\+\+|Ruby|Go|Flutter|Kotlin)/i.test(t)
 );
 
-// 25. Include one of the frameworks for web development
 const rule25 = new Rule(
   "Your password must include the name of a web development framework.",
   (t) => /(React|Angular|Vue|Next\.js|Svelte)/i.test(t)
@@ -185,13 +196,16 @@ const rule25 = new Rule(
 
 var rules = [
   rule1, rule2, rule3, rule4, rule5,
-  rule6, rule7, rule8, rule9, rule10,
+  rule6, rule7, rule8, rule9,
+  new RuleSyntaxError(), rule10,
   rule11, rule12, rule13, rule14, rule15,
   rule16, rule17, rule18, rule19, rule20,
-  rule21, rule22, rule23, rule24, rule25
+  rule21, rule22, rule23, rule24, rule25,
+   new RuleInfiniteLoop(),
+   
+  // new RuleVersionUpdate(),
 ];
 
-// Hints array (leave as-is for now; you'll adjust later if needed)
 var hints = [
     "Hint: Ensure your password is at least 8 characters long.",
     "Hint: Include an uppercase letter (A-Z).",

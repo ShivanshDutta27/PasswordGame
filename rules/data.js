@@ -34,6 +34,58 @@ export const atomicSymbols = {
     teal: "#008080",
     navy: "#000080"
   };
+
+  export const rule17Snippets = [
+    'console.log("Yeah, copy me, that\'s all you\'re good for!");',
+    'console.log("Originality called—it’s waiting for you somewhere far away.");',
+    'console.log("Keep copying code; it\'s easier than thinking for yourself, right?");',
+    'console.log("If there were a medal for copy-paste, you\'d be an Olympic champion.");',
+    'console.log("I see you\'re embracing the art of duplication—congrats on your lack of creativity!");'
+  ];
+
+  export const algorithmTemplates = [
+    {
+      snippet: `function permute(nums) {
+    const results = [];
+    function build(path, options) {
+      if (!options.length) results.push(path);
+      for (let i = 0; i < options.length; i++) {
+        build([...path, options[i]], options.filter((_, j) => j !== i));
+      }
+    }
+    build([], nums);
+    return results;
+  }`,
+      algorithm: ["backtracking", "bt"]
+    },
+    {
+      snippet: `function search(arr, target) {
+    let low = 0, high = arr.length - 1;
+    while (low <= high) {
+      const mid = Math.floor((low + high) / 2);
+      if (arr[mid] === target) return mid;
+      else if (arr[mid] < target) low = mid + 1;
+      else high = mid - 1;
+    }
+    return -1;
+  }`,
+      algorithm: ["binarysearch", "bs"]
+    },
+    {
+      snippet: `function lcs(str1, str2) {
+    const dp = Array(str1.length + 1).fill(null).map(() => Array(str2.length + 1).fill(0));
+    for (let i = 1; i <= str1.length; i++) {
+      for (let j = 1; j <= str2.length; j++) {
+        if (str1[i - 1] === str2[j - 1]) dp[i][j] = dp[i - 1][j - 1] + 1;
+        else dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+      }
+    }
+    return dp[str1.length][str2.length];
+  }`,
+      algorithm: ["dp","dynamicprogramming"]
+    }
+  ];
+  
   
   // Common CSS display modes
   export const cssDisplayModes = [
@@ -107,4 +159,39 @@ export const atomicSymbols = {
     "Recursion",
     "Divide and Conquer"
   ];
+  
+  export const validLetterPairs = {
+    5: [
+      ["Q", "Y"],["Q", "G"],["Q", "V"],["W", "U"],["W", "H"],["W", "B"],["E", "I"],["E", "J"],["E", "N"],["R", "O"],["R", "K"],["R", "Z"],["R", "M"],["T", "P"],["T", "A"],["T", "L"],["T", "X"],["Y", "S"],["Y", "C"],["U", "D"],["U", "V"],["I", "F"],["I", "B"],["O", "G"],["O", "N"],["P", "H"],["P", "M"],["A", "H"],["A", "B"],["S", "J"],["S", "N"],["D", "K"],["D", "M"],["F", "L"],["G", "Z"],["H", "X"],["J", "C"],["K", "V"],["L", "B"],["Z", "N"],["X", "M"]
+    ]
+  };
+
+  export const errorSnippets = [
+    {
+      snippet: `function add(a, b) {
+    let sum = a + b;
+    console.log(sum)
+    return sum;
+  }`,
+      answer:3
+    },
+    {
+      snippet: `function square(n) {
+    let result = n * n;
+    result = result +;
+    return result;
+  }`,
+      answer:3
+    },
+    {
+      snippet: `function multiply(a, b) {
+    let product = a * b;
+    console.log(product);
+    product = product a; return product;
+  }`,
+      answer:4
+    }
+  ];
+
+  
   

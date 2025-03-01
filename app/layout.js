@@ -1,7 +1,9 @@
 import "./globals.css"
 
+
+
 export const metadata = {
-  title: 'QuirkyLock',
+  title: 'Break; Out!',
   description: 'Lock your deepest secrets with the ultimate password',
 }
  
